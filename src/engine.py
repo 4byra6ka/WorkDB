@@ -51,6 +51,7 @@ class Engine(DBManager, HeadHunterAPI):
             i = 1
 
     def engine_submenu(self, employer):
+        """Подменю действий в выбранном запросе вакансий"""
         text_menu_query = '1: Вывести список всех вакансий\n' \
                           '2: Удалить данную организацию из списка\n' \
                           '3: Назад\n'
