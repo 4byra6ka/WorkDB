@@ -13,3 +13,8 @@ def config(filename="database.ini", section="postgresql"):
         raise Exception(
             'Section {0} is not found in the {1} file.'.format(section, filename))
     return db
+
+
+def check_salary(salary):
+    """Приведение значения зарплата в нужный вид"""
+    return salary if not salary is None else 0

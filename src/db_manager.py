@@ -43,6 +43,7 @@ class DBManager:
                             salary_from int NOT NULL,
                             salary_to int NOT NULL,
                             url varchar(255) NOT NULL,
+                            description text,
                             CONSTRAINT pk_vacancies PRIMARY KEY (id),
                             CONSTRAINT fk_employers_vacancies FOREIGN KEY(employer_id) REFERENCES public.employers(id))
                         """)
@@ -50,14 +51,63 @@ class DBManager:
         conn.commit()
         conn.close()
 
+    def add_companies_and_vacancies(self, employer_data: dict, vacancies_data: list):
+        with psycopg2.connect(dbname=self.db_name, **self.params) as connection:
+            with connection.cursor() as cur:
+                cur.execute('INSERT INTO public.employers VALUES (%s, %s)', (employer_data['id'], employer_data['name'])
+                            )
+                cur.executemany('INSERT INTO public.vacancies VALUES (%s, %s, %s, %s, %s, %s, %s)', vacancies_data)
+
     def get_companies_and_vacancies_count(self):
         """Получает список всех компаний и количество вакансий у каждой компании"""
-        pass
+        conn = psycopg2.connect(dbname=self.db_name, **self.params)
+        try:
+            with conn:
+                with conn.cursor() as cur:
+                    cur.execute("SELECT employers.name, COUNT(*), employers.id "
+                                "FROM employers "
+                                "join vacancies ON employers.id = vacancies.employer_id "
+                                "GROUP BY employers.name, employers.id "
+                                "ORDER BY COUNT(employers.name) DESC")
+                    return cur.fetchall()
+                    pass
+        finally:
+            conn.close()
 
-    def get_all_vacancies(self):
+    def del_companies_and_vacancies(self, employers_id: int):
+        sql_query = """
+        DELETE FROM vacancies WHERE employer_id = %s;
+        DELETE FROM employers WHERE id = %s;
+        """
+        conn = psycopg2.connect(dbname=self.db_name, **self.params)
+        try:
+            with conn:
+                with conn.cursor() as cur:
+                    cur.execute(sql_query, [employers_id])
+                    return cur.fetchall()
+                    pass
+        finally:
+            conn.close()
+
+    def get_all_vacancies(self, employers_id: int):
         """Получает список всех вакансий с указанием названия компании, названия вакансии и зарплаты и ссылки на
         вакансию"""
-        pass
+        sql_query = """
+        SELECT employers.name, vacancies.name, vacancies.salary_from, vacancies.salary_to, vacancies.url, 
+        vacancies.description
+        FROM employers
+        join vacancies ON employers.id=vacancies.employer_id
+        where employers.id = %s
+        """
+        conn = psycopg2.connect(dbname=self.db_name, **self.params)
+        try:
+            with conn:
+                with conn.cursor() as cur:
+                    cur.execute(sql_query, [employers_id])
+                    return cur.fetchall()
+                    pass
+        finally:
+            conn.close()
 
     def get_avg_salary(self):
         """Получает среднюю зарплату по вакансиям"""
