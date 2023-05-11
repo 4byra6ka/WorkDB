@@ -18,6 +18,7 @@ class HeadHunterAPI:
         return hh_request.json()
 
     def get_search_employers(self, employer: str):
+        """Поиск организации на HH"""
         search = {
             'text': employer,
             'per_page': 100,
@@ -40,7 +41,7 @@ class HeadHunterAPI:
         return data_employers
 
     def get_insert_vacancies(self, employer_id: int):
-        """Обработка вакансий по параметрам с сайта SuperJob и добавления в класс SearchVacancies"""
+        """Поиск вакансий на HH"""
         data_vacancies = []
         search = {'employer_id': employer_id,
                   'per_page': 100,
@@ -56,15 +57,6 @@ class HeadHunterAPI:
                     salary_min = salary_max
                 elif salary_max == 0:
                     salary_max = salary_min
-                # data_vacancies.append({
-                #     'id': hh_vacancy['id'],
-                #     'employer_id': hh_vacancy['employer']['id'],
-                #     'salary_min': salary_min,
-                #     'salary_max': salary_max,
-                #     'name': hh_vacancy['name'],
-                #     'url': hh_vacancy['alternate_url'],
-                #     'description': ' '.join(re.sub(r'\<[^>]*\>', ' ', hh_vacancy['description']).split())
-                # })
                 data_vacancies.append((hh_vacancy['id'],
                                        hh_vacancy['employer']['id'],
                                        hh_vacancy['name'],
