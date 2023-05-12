@@ -5,6 +5,7 @@ import psycopg2
 class DBManager:
 
     def __init__(self):
+        super().__init__()
         self.db_name = "hh"
         self.params = config()
         self.check_create_database()

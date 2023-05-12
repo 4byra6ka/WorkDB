@@ -8,47 +8,48 @@ class Engine(DBManager, HeadHunterAPI):
         super().__init__()
         self.menu = []
         self.employers = self.get_companies_and_vacancies_count()
-        # self.db = DBManager()
 
     def engine_menu(self):
         """Меню действий в выбранном запросе вакансий"""
-        text_menu_query = '11: Вывести список всех вакансий\n' \
-                          '12: "Вывести среднюю зарплату по всем вакансиям"\n' \
-                          '13: "Вывести список всех вакансий, у которых зарплата выше средней"\n' \
-                          '14: "Вывести список всех вакансий, в названии которых содержатся ваше ключевое слово"\n' \
-                          '15: "Найти организацию на HH по ключевому слову"\n' \
-                          '16: "Завершить сессию"\n'
+        text_menu_first = ["Добавить организацию и вакансии с HH в БД", "Завершить сессию"]
+        text_menu_second = ["Добавить организацию и вакансии с HH в БД", "Вывести среднюю зарплату по всем вакансиям",
+                            "Вывести список всех вакансий, у которых зарплата выше средней",
+                            "Вывести список всех вакансий, в названии которых содержатся ваше ключевое слово",
+                            "Вывести список всех вакансий", "Завершить сессию"]
         while True:
-            i = 1
-            print('*' * 100)
-            # while True:
-            for employer in self.employers:
-                print(f'{i}: "{employer[0]}" Кол-во вакансий:{employer[1]}')
-                i += 1
-            print('*' * 100)
-            print(text_menu_query)
+            position_menu = 1
+            if len(self.employers) > 0:
+                print('*' * 100)
+                for employer in self.employers:
+                    print(f'{position_menu}: "{employer[0]}" Кол-во вакансий:{employer[1]}')
+                    position_menu += 1
+                print('*' * 100)
+                for menu_second in text_menu_second:
+                    print(f'{position_menu}: {menu_second}')
+                    position_menu += 1
+            else:
+                print('*' * 100)
+                for menu_first in text_menu_first:
+                    print(f'{position_menu}: {menu_first}')
+                    position_menu += 1
+                print('*' * 100)
             position_name = int(input("Введи номер:"))
             if position_name in range(1, len(self.employers) + 1):
                 self.engine_submenu(self.employers[position_name - 1])
-            elif position_name == 11:
-                print('*' * 100)
-                for vacancy in self.get_all_vacancies():
-                    if vacancy[2] == vacancy[3]:
-                        salary = f" {vacancy[2]}₽"
-                    else:
-                        salary = f" от {vacancy[2]}₽ до {vacancy[3]}₽"
-                    print(f"Организация:{vacancy[0]}, Должность:{vacancy[1]}, Зарплата{salary}, "
-                          f"Ссылка на вакансию:{vacancy[4]}")
-                    print('*' * 100)
-                continue
-            elif position_name == 12:
+            elif position_name == len(self.employers) + 1:
+                if len(self.employers) != 10:
+                    employer_name = input("Введи название организации:")
+                    self.search_add_bd_employers(employer_name)
+                else:
+                    print("\nПревышен лимит. Не может быть больше 10 организаций. Удалите!!!\n")
+            elif position_name == len(self.employers) + 2 and len(self.employers) > 0:
                 print('*' * 100)
                 for vacancy in self.get_avg_salary():
                     print(f"Организация:{vacancy[0]}, Должность:{vacancy[1]}, Зарплата {vacancy[2]}₽, "
                           f"Ссылка на вакансию:{vacancy[3]}")
                     print('*' * 100)
                 continue
-            elif position_name == 13:
+            elif position_name == len(self.employers) + 3 and len(self.employers) > 0:
                 print('*' * 100)
                 for vacancy in self.get_vacancies_with_higher_salary():
                     if vacancy[2] == vacancy[3]:
@@ -59,7 +60,7 @@ class Engine(DBManager, HeadHunterAPI):
                           f"Ссылка на вакансию:{vacancy[4]}")
                     print('*' * 100)
                 continue
-            elif position_name == 14:
+            elif position_name == len(self.employers) + 4 and len(self.employers) > 0:
                 word = input("Введи слово для поиска подходящих вакансий:")
                 print('*' * 100)
                 for vacancy in self.get_vacancies_with_keyword(word):
@@ -71,13 +72,19 @@ class Engine(DBManager, HeadHunterAPI):
                           f"Ссылка на вакансию:{vacancy[4]}")
                     print('*' * 100)
                 continue
-            elif position_name == 15:
-                if len(self.employers) != 10:
-                    employer_name = input("Введи название организации:")
-                    self.search_add_bd_employers(employer_name)
-                else:
-                    print("\nПревышен лимит. Не может быть больше 10 организаций. Удалите!!!\n")
-            elif position_name == 16:
+            elif position_name == len(self.employers) + 5 and len(self.employers) > 0:
+                print('*' * 100)
+                for vacancy in self.get_all_vacancies():
+                    if vacancy[2] == vacancy[3]:
+                        salary = f" {vacancy[2]}₽"
+                    else:
+                        salary = f" от {vacancy[2]}₽ до {vacancy[3]}₽"
+                    print(f"Организация:{vacancy[0]}, Должность:{vacancy[1]}, Зарплата{salary}, "
+                          f"Ссылка на вакансию:{vacancy[4]}")
+                    print('*' * 100)
+                continue
+            elif (position_name == len(self.employers) + 6 and len(self.employers) > 0) or \
+                    (position_name == len(self.employers) + 2 and len(self.employers) == 0):
                 break
             else:
                 print("\nВведи цифру из списка")
@@ -161,4 +168,6 @@ class Engine(DBManager, HeadHunterAPI):
                     break
             except:
                 print("\nВведи цифру или букву из списка")
+                course_point = 0
+
         self.employers = self.get_companies_and_vacancies_count()
