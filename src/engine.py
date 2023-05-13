@@ -43,14 +43,14 @@ class Engine(DBManager, HeadHunterAPI):
                 else:
                     print("\nПревышен лимит. Не может быть больше 10 организаций. Удалите!!!\n")
             elif position_name == len(self.employers) + 2 and len(self.employers) > 0:
-                print('*' * 100)
+                print(f"\n{'*' * 20} Список всех вакансий со средней зарплатой по каждой {'*' * 50}")
                 for vacancy in self.get_avg_salary():
                     print(f"Организация:{vacancy[0]}, Должность:{vacancy[1]}, Зарплата {vacancy[2]}₽, "
                           f"Ссылка на вакансию:{vacancy[3]}")
                     print('*' * 100)
                 continue
             elif position_name == len(self.employers) + 3 and len(self.employers) > 0:
-                print('*' * 100)
+                print(f"\n{'*' * 20} Список всех вакансий, у которых зарплата выше средней {'*' * 50}")
                 for vacancy in self.get_vacancies_with_higher_salary():
                     if vacancy[2] == vacancy[3]:
                         salary = f" {vacancy[2]}₽"
@@ -62,7 +62,7 @@ class Engine(DBManager, HeadHunterAPI):
                 continue
             elif position_name == len(self.employers) + 4 and len(self.employers) > 0:
                 word = input("Введи слово для поиска подходящих вакансий:")
-                print('*' * 100)
+                print(f"\n{'*' * 20} Список всех вакансий, в названии которых содержатся ваше ключевое слово {'*' * 50}")
                 for vacancy in self.get_vacancies_with_keyword(word):
                     if vacancy[2] == vacancy[3]:
                         salary = f" {vacancy[2]}₽"
@@ -73,7 +73,7 @@ class Engine(DBManager, HeadHunterAPI):
                     print('*' * 100)
                 continue
             elif position_name == len(self.employers) + 5 and len(self.employers) > 0:
-                print('*' * 100)
+                print(f"\n{'*' * 20} Список всех вакансий {'*' * 50}")
                 for vacancy in self.get_all_vacancies():
                     if vacancy[2] == vacancy[3]:
                         salary = f" {vacancy[2]}₽"
