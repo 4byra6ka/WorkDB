@@ -43,11 +43,9 @@ class Engine(DBManager, HeadHunterAPI):
                 else:
                     print("\nПревышен лимит. Не может быть больше 10 организаций. Удалите!!!\n")
             elif position_name == len(self.employers) + 2 and len(self.employers) > 0:
-                print(f"\n{'*' * 20} Список всех вакансий со средней зарплатой по каждой {'*' * 50}")
-                for vacancy in self.get_avg_salary():
-                    print(f"Организация:{vacancy[0]}, Должность:{vacancy[1]}, Зарплата {vacancy[2]}₽, "
-                          f"Ссылка на вакансию:{vacancy[3]}")
-                    print('*' * 100)
+                print(f"\n{'*' * 20} Вывести среднюю зарплату по всем вакансиям {'*' * 50}")
+                print(f'Средняя заработная плата по всем вакансиям: {int(self.get_avg_salary()[0][0])}₽')
+                print('*' * 100)
                 continue
             elif position_name == len(self.employers) + 3 and len(self.employers) > 0:
                 print(f"\n{'*' * 20} Список всех вакансий, у которых зарплата выше средней {'*' * 50}")

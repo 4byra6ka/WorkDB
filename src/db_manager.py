@@ -128,11 +128,15 @@ class DBManager:
 
     def get_avg_salary(self):
         """Получает среднюю зарплату по всем вакансиям"""
+        # sql_query = """
+        #     SELECT employers.name, vacancies.name, (vacancies.salary_from + vacancies.salary_to) /2 AS salary ,
+        #     vacancies.url, vacancies.description
+        #     FROM public.employers
+        #     JOIN public.vacancies ON employers.id=vacancies.employer_id
+        # """
         sql_query = """
-            SELECT employers.name, vacancies.name, (vacancies.salary_from + vacancies.salary_to) /2 AS salary , 
-            vacancies.url, vacancies.description
-            FROM public.employers
-            JOIN public.vacancies ON employers.id=vacancies.employer_id
+        SELECT AVG((salary_from + salary_to) / 2) AS salary
+        FROM public.vacancies
         """
         conn = psycopg2.connect(dbname=self.db_name, **self.params)
         try:
